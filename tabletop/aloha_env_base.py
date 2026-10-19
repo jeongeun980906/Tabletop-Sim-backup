@@ -344,7 +344,11 @@ class AlohaTask(base.Task):
         obs['env_state'] = self.get_env_state(physics)
         obs['images'] = dict()
         obs['images']['back'] = physics.render(height=480, width=640, camera_id='teleoperator_pov')
-        # obs['images']['front'] = physics.render(height=480, width=640, camera_id='collaborator_pov')
+        # front 는 cosmos-framework 의 aloha_tabletop 학습이 쓰는 씬 뷰다
+        # (aloha_tabletop_dataset.py 의 _VIEWS = front + wrist_left + wrist_right;
+        #  back 은 그쪽에서 의도적으로 버린다). 주석 상태로 두면 eval 이 학습과
+        # 다른 시점을 모델에 먹이게 되므로 되살린다.
+        obs['images']['front'] = physics.render(height=480, width=640, camera_id='collaborator_pov')
         if not self.single_arm:
             obs['images']['wrist_left'] = physics.render(height=240, width=320, camera_id='wrist_cam_left')
             obs['images']['wrist_right'] = physics.render(height=240, width=320, camera_id='wrist_cam_right')
